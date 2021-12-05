@@ -33,5 +33,5 @@ jobs:
         run: python main.py -f1 Demo_Image_1.jpg -f2 Demo_Image_2.jpg -s
 
       # Runs a set of commands using the runners shell
-      - name: Run a multi-line script
-        run: python main.py -f1 Demo_Image_1.jpg -f2 VideoFile.mp4 --wf
+      - name: Img-Vid
+        run: python main.py -iv -f1 Demo_Image_1.jpg -f2 VideoFile.mp4 --wf
