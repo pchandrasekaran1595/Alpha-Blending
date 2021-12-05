@@ -73,7 +73,6 @@ def run():
         assert file_2 is not None, "Enter Argument for (--file2 | -f2)"
         assert file_2 in os.listdir(READ_PATH), "File 2 Not Found"
 
-
         image_1 = cv2.resize(src=cv2.imread(os.path.join(READ_PATH, file_1), cv2.IMREAD_COLOR), dsize=(width, height), interpolation=cv2.INTER_AREA)
         image_2 = cv2.resize(src=cv2.imread(os.path.join(READ_PATH, file_2), cv2.IMREAD_COLOR), dsize=(width, height), interpolation=cv2.INTER_AREA)
         image = cv2.addWeighted(image_1, alpha, image_2, 1-alpha, 0)
