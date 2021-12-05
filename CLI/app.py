@@ -85,9 +85,10 @@ def run():
     
     if img_vid:
         assert file_2 is not None, "Enter Argument for (--file2 | -f2)"
-        assert file_2 in os.listdir(READ_PATH), "File 2 Not Found"
 
         if not workflow:
+            assert file_2 in os.listdir(READ_PATH), "File 2 Not Found"
+
             cap = cv2.VideoCapture(os.path.join(READ_PATH, file_2))
 
             is_resize_w = True
