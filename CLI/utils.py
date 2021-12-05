@@ -15,13 +15,6 @@ if not os.path.exists(SAVE_PATH):
     os.makedirs(SAVE_PATH)
 
 
-def blend(fg: np.ndarray, bg: np.ndarray, alpha: float) -> np.ndarray:
-    fg = fg / 255
-    bg = bg / 255
-    image = fg * alpha + (1-alpha) * bg
-    return np.clip(image*255, 0, 255).astype("uint8")
-
-
 def show(image: np.ndarray) -> None:
     plt.figure()
     plt.imshow(image)

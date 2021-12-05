@@ -4,7 +4,7 @@ import cv2
 
 from .utils import READ_PATH, SAVE_PATH, \
                    CAM_WIDTH, CAM_HEIGHT, CAM_FPS, \
-                   blend, show
+                   show
 
 
 def run():
@@ -17,6 +17,7 @@ def run():
     realtime = False
     width, height = 1920, 1080
     save = False
+    workflow = False
 
     args_1 = ["--file1", "-f1"]
     args_2 = ["--file2", "-f2"]
@@ -27,6 +28,7 @@ def run():
     args_7 = ["--width", "-w"]
     args_8 = ["--height", "-h"]
     args_9 = ["--save", "-s"]
+    args_10 = "--wf"
 
     if args_1[0] in sys.argv: file_1 = sys.argv[sys.argv.index(args_1[0]) + 1]
     if args_1[1] in sys.argv: file_1 = sys.argv[sys.argv.index(args_1[1]) + 1]
@@ -54,6 +56,8 @@ def run():
 
     if args_9[0] in sys.argv: save = True
     if args_9[1] in sys.argv: save = True
+
+    if args_10 in sys.argv: workflow = True
 
     assert file_1 is not None, "Enter Argument for (--file1 | -f1)"
     assert file_1 in os.listdir(READ_PATH), "File 1 Not Found"
@@ -83,47 +87,48 @@ def run():
         assert file_2 is not None, "Enter Argument for (--file2 | -f2)"
         assert file_2 in os.listdir(READ_PATH), "File 2 Not Found"
 
-        cap = cv2.VideoCapture(os.path.join(READ_PATH, file_2))
+        if not workflow:
+            cap = cv2.VideoCapture(os.path.join(READ_PATH, file_2))
 
-        is_resize_w = True
-        is_resize_h = True
+            is_resize_w = True
+            is_resize_h = True
 
-        if args_7[0] not in sys.argv and args_7[1] not in sys.argv: 
-            width = cap.get(cv2.CAP_PROP_FRAME_WIDTH)
-            is_resize_w = False
-        if args_8[0] not in sys.argv and args_8[1] not in sys.argv: 
-            height = cap.get(cv2.CAP_PROP_FRAME_HEIGHT)
-            is_resize_h = False
-        
-        width = int(width)
-        height = int(height)
-        
-        fps = cap.get(cv2.CAP_PROP_FPS)
-        image = cv2.resize(src=cv2.imread(os.path.join(READ_PATH, file_1), cv2.IMREAD_COLOR), dsize=(width, height), interpolation=cv2.INTER_AREA)
+            if args_7[0] not in sys.argv and args_7[1] not in sys.argv: 
+                width = cap.get(cv2.CAP_PROP_FRAME_WIDTH)
+                is_resize_w = False
+            if args_8[0] not in sys.argv and args_8[1] not in sys.argv: 
+                height = cap.get(cv2.CAP_PROP_FRAME_HEIGHT)
+                is_resize_h = False
+            
+            width = int(width)
+            height = int(height)
+            
+            fps = cap.get(cv2.CAP_PROP_FPS)
+            image = cv2.resize(src=cv2.imread(os.path.join(READ_PATH, file_1), cv2.IMREAD_COLOR), dsize=(width, height), interpolation=cv2.INTER_AREA)
 
-        if save:
-            out = cv2.VideoWriter(os.path.join(SAVE_PATH, "Processed.mp4"), cv2.VideoWriter_fourcc(*"mp4v"), fps, (width, height))
+            if save:
+                out = cv2.VideoWriter(os.path.join(SAVE_PATH, "Processed.mp4"), cv2.VideoWriter_fourcc(*"mp4v"), fps, (width, height))
 
-        while cap.isOpened():
-            ret, frame = cap.read()
+            while cap.isOpened():
+                ret, frame = cap.read()
 
-            if ret:
-                if is_resize_w or is_resize_h:
-                    frame = cv2.resize(src=frame, dsize=(width, height), interpolation=cv2.INTER_AREA)
-                frame = cv2.addWeighted(image, alpha, frame, 1-alpha, 0)
-                if save:
-                    out.write(frame)
+                if ret:
+                    if is_resize_w or is_resize_h:
+                        frame = cv2.resize(src=frame, dsize=(width, height), interpolation=cv2.INTER_AREA)
+                    frame = cv2.addWeighted(image, alpha, frame, 1-alpha, 0)
+                    if save:
+                        out.write(frame)
+                    else:
+                        cv2.imshow("Feed", frame)
+                    if cv2.waitKey(1) == ord("q"):
+                        break
                 else:
-                    cv2.imshow("Feed", frame)
-                if cv2.waitKey(1) == ord("q"):
-                    break
-            else:
-                if save:
-                    break
-                else:
-                    cap.set(cv2.CAP_PROP_POS_FRAMES, 0)
-    
-        cap.release()
-        if save:
-            out.release()
-        cv2.destroyAllWindows()
+                    if save:
+                        break
+                    else:
+                        cap.set(cv2.CAP_PROP_POS_FRAMES, 0)
+        
+            cap.release()
+            if save:
+                out.release()
+            cv2.destroyAllWindows()
