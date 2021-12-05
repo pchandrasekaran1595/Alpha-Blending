@@ -1,6 +1,7 @@
 import os
 import sys
 import cv2
+import platform
 
 from .utils import READ_PATH, SAVE_PATH, \
                    CAM_WIDTH, CAM_HEIGHT, CAM_FPS, \
@@ -23,7 +24,7 @@ def run():
     args_2 = ["--file2", "-f2"]
     args_3 = ["--alpha", "-a"]
     args_4 = ["--img-vid", "-iv"]
-    args_5 = ["--vid-vid", "--vv"]
+    args_5 = ["--vid-vid", "-vv"]
     args_6 = ["--realtime", "-rt"]
     args_7 = ["--width", "-w"]
     args_8 = ["--height", "-h"]
@@ -131,4 +132,72 @@ def run():
             cap.release()
             if save:
                 out.release()
+            cv2.destroyAllWindows()
+        
+    
+    if vid_vid:
+        assert file_2 is not None, "Enter Argument for (--file2 | -f2)"
+
+        if not workflow:
+            assert file_2 in os.listdir(READ_PATH), "File 2 Not Found"
+
+            cap_1 = cv2.VideoCapture(os.path.join(READ_PATH, file_1))
+            cap_2 = cv2.VideoCapture(os.path.join(READ_PATH, file_2))
+
+            fps = 30
+
+            if save:
+                out = cv2.VideoWriter(os.path.join(SAVE_PATH, "Processed.mp4"), cv2.VideoWriter_fourcc(*"mp4v"), fps, (width, height))
+
+            while cap_1.isOpened() and cap_2.isOpened():
+                ret_1, frame_1 = cap_1.read()
+                ret_2, frame_2 = cap_2.read()
+
+                if ret_1 and ret_2:
+                    frame_1 = cv2.resize(src=frame_1, dsize=(width, height), interpolation=cv2.INTER_AREA)
+                    frame_2 = cv2.resize(src=frame_2, dsize=(width, height), interpolation=cv2.INTER_AREA)
+
+                    frame = cv2.addWeighted(frame_1, alpha, frame_2, 1-alpha, 0)
+                    if save:
+                        out.write(frame)
+                    else:
+                        cv2.imshow("Feed", frame)
+                    if cv2.waitKey(1) == ord("q"):
+                        break
+                else:
+                    if save:
+                        break
+                    else:
+                        cap_1.set(cv2.CAP_PROP_POS_FRAMES, 0)
+                        cap_2.set(cv2.CAP_PROP_POS_FRAMES, 0)
+        
+            cap_1.release()
+            cap_2.release()
+            if save:
+                out.release()
+            cv2.destroyAllWindows()
+
+    if realtime:
+        image = cv2.resize(src=cv2.imread(os.path.join(READ_PATH, file_1), cv2.IMREAD_COLOR), dsize=(CAM_WIDTH, CAM_HEIGHT), interpolation=cv2.INTER_AREA)
+
+        if not workflow:
+            if platform.system() != "Windows":
+                cap = cv2.VideoCapture(0)
+            else:
+                cap = cv2.VideoCapture(0, cv2.CAP_DSHOW)
+            cap.set(cv2.CAP_PROP_FRAME_WIDTH, CAM_WIDTH)
+            cap.set(cv2.CAP_PROP_FRAME_HEIGHT, CAM_HEIGHT)
+            cap.set(cv2.CAP_PROP_FPS, CAM_FPS)
+
+            while cap.isOpened():
+                _, frame = cap.read()
+
+                frame = cv2.addWeighted(image, alpha, frame, 1-alpha, 0)
+
+                cv2.imshow("Feed", frame)
+                
+                if cv2.waitKey(1) == ord("q"):
+                    break
+            
+            cap.release()
             cv2.destroyAllWindows()
