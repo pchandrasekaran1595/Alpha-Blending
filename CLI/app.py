@@ -61,7 +61,9 @@ def run():
     if args_10 in sys.argv: workflow = True
 
     assert file_1 is not None, "Enter Argument for (--file1 | -f1)"
-    assert file_1 in os.listdir(READ_PATH), "File 1 Not Found"
+
+    if not workflow:
+        assert file_1 in os.listdir(READ_PATH), "File 1 Not Found"
 
     assert not (img_vid and img_img), "Fatal Error"
     assert not (img_vid and vid_vid), "Fatal Error"
