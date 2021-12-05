@@ -25,6 +25,9 @@ jobs:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
 
+      - name: Install Dependencies
+        run: python -m pip install -r requirements.txt
+
       # Runs a single command using the runners shell
       - name: Img-Img
         run: python main.py -f1 Demo_Image_1.jpg -f2 Demo_Image_2.jpg -s
