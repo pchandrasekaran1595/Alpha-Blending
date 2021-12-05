@@ -38,4 +38,4 @@ jobs:
         run: python main.py -vv -f1 VideoFile_1.mp4 -f2 VideoFile_2.mp4 --wf
       
       - name: Realtime
-        run: python main.py -rt -f1 Demo_Image_1.jpg
+        run: python main.py -rt -f1 Demo_Image_1.jpg --wf
