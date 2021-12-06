@@ -32,10 +32,10 @@ jobs:
         # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
         flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
     - name: Img-Img
-        run: python main.py -f1 Demo_Image_1.jpg -f2 Demo_Image_2.jpg -s
+      run: python main.py -f1 Demo_Image_1.jpg -f2 Demo_Image_2.jpg -s
     - name: Img-Vid
-        run: python main.py -iv -f1 Demo_Image_1.jpg -f2 VideoFile.mp4 --wf
+      run: python main.py -iv -f1 Demo_Image_1.jpg -f2 VideoFile.mp4 --wf
     - name: Vid-Vid
-        run: python main.py -vv -f1 VideoFile_1.mp4 -f2 VideoFile_2.mp4 --wf
+      run: python main.py -vv -f1 VideoFile_1.mp4 -f2 VideoFile_2.mp4 --wf
     - name: Realtime
-        run: python main.py -rt -f1 Demo_Image_1.jpg --wf
+      run: python main.py -rt -f1 Demo_Image_1.jpg --wf
